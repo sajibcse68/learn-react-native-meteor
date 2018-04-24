@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import Meteor from 'react-native-meteor';
 import Container from '../components/Container';
 import { Header } from '../components/Text';
 import LocateMeButton from '../components/LocateMeButton';
@@ -10,9 +11,32 @@ class FindNearMe extends Component {
     alertWithType: PropTypes.func,
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false,
+    };
+  }
+
   handleGeolocationSuccess = (position) => {
-    console.log('latitude: ', position.coords.latitude);
-    console.log('longitude: ', position.coords.longitude);
+    const params = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    };
+
+    this.setState({ loading: true });
+    console.log('>>>>>>>>>>>>>>>>>>>');
+    Meteor.call('Locations.getNearestLocations', params, (err, locations) => {
+      if (err) {
+        this.props.alertWithType('error', 'Error', err.reason);
+      } else {
+        console.log('locations', locations);
+      }
+      this.setState({ loading: false });
+    });
+    // console.log('latitude: ', position.coords.latitude);
+    // console.log('longitude: ', position.coords.longitude);
   };
 
   handleGeolocationError = (error) => {
@@ -32,6 +56,7 @@ class FindNearMe extends Component {
       <Container>
         <LocateMeButton
           onPress={this.goToNearMe}
+          loading={this.state.loading}
         />
         <Header>
           Find Nearest charging Stations
