@@ -58,7 +58,7 @@ class FindNearMe extends Component {
           loading={this.state.loading}
         />
         <Header>
-          Find Nearest charging Stations
+          Find Nearest Charging Stations
         </Header>
       </Container>
     );

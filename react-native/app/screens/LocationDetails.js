@@ -1,20 +1,21 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { Button, Card } from 'react-native-elements';
 import { Text } from 'react-native';
+import { Button, Card } from 'react-native-elements';
 import _ from 'lodash';
+import Meteor, { createContainer } from 'react-native-meteor';
 import Container from '../components/Container';
 import colors from '../config/colors';
 
 class LocationDetails extends Component {
   static propTypes = {
-    navigation: PropTypes.object,
-  };
+    location: PropTypes.object,
+  }
 
   render() {
-    console.log(this.props.navigation.state.params.location);
-    const { location } = this.props.navigation.state.params;
-    const userId = _.get(this.props, 'user_id', '');
+    console.log(this.props.location);
+    const location = this.props.location || _.get(this.props, 'navigation.state.params.location', {});
+    const userId = _.get(this.props, 'user._id', '');
     const checkedIn = location.checkedInUserId === userId;
     const available = typeof location.checkedInUserId !== 'string';
 
@@ -52,4 +53,15 @@ class LocationDetails extends Component {
   }
 }
 
-export default LocationDetails;
+const ConnectedLocationDetails = createContainer((params) => {
+  const location = _.get(params, 'navigation.state.params.location', {});
+
+  Meteor.subscribe('Locations.pub.details', { locationId: location._id });
+
+  return {
+    user: Meteor.user(),
+    location: Meteor.collection('locations').findOne({ _id: location._id }),
+  };
+}, LocationDetails);
+
+export default ConnectedLocationDetails;
