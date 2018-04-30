@@ -9,6 +9,7 @@ import { connectAlert } from '../components/Alert';
 class FindNearMe extends Component {
   static propTypes = {
     alertWithType: PropTypes.func,
+    navigation: PropTypes.object,
   }
 
   constructor(props) {
@@ -26,17 +27,15 @@ class FindNearMe extends Component {
     };
 
     this.setState({ loading: true });
-    console.log('>>>>>>>>>>>>>>>>>>>');
     Meteor.call('Locations.getNearestLocations', params, (err, locations) => {
       if (err) {
         this.props.alertWithType('error', 'Error', err.reason);
       } else {
-        console.log('locations', locations);
+        console.log('locations: ', locations);
+        this.props.navigation.navigate('NearMe', { locations });
       }
       this.setState({ loading: false });
     });
-    // console.log('latitude: ', position.coords.latitude);
-    // console.log('longitude: ', position.coords.longitude);
   };
 
   handleGeolocationError = (error) => {

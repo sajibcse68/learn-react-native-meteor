@@ -1,5 +1,5 @@
 export default {
-  SERVER_URL: 'ws://192.168.1.11:3000/websocket',
+  SERVER_URL: 'ws://192.168.1.2:3000/websocket',
   // SERVER_URL: 'ws://192.168.1.81:3000/websocket',
   errorStyles: {
     text: { color: '#fff' },
